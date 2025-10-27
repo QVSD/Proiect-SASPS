@@ -1,8 +1,7 @@
-# Platformă extensibilă pentru prelucrarea și raportarea datelor
+# Sistem modular de trading al criptomonedelor 
 
 ## Descriere
-Proiectul are ca scop dezvoltarea unei platforme modulare destinată prelucrării și raportării datelor, având ca studiu de caz un sistem simplificat de **trading automat de arbitraj**.  
-Lucrarea urmărește analiza comparativă dintre două implementări arhitecturale una bazată pe **design patterns** (Observer Pattern) și una procedurală (fără pattern-uri) pentru a evidenția impactul modelelor de proiectare asupra eficienței și performanței sistemelor software.
+Proiectul propune dezvoltarea unei platforme modulare de analiză și tranzacționare automată ce simulează un sistem simplificat de arbitraj între două exchange-uri de criptomonede.
 
 ---
 
