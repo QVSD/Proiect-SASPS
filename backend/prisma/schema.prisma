@@ -18,10 +18,10 @@ enum QueryType {
 }
 
 model Token {
-  id      String @id @default(cuid())
-  symbol  String
-  name    String
-  address String @unique
+  address  String @id
+  symbol   String
+  name     String
+  decimals Int
 
   tradingPairsBase  TradingPair[] @relation("BaseToken")
   tradingPairsQuote TradingPair[] @relation("QuoteToken")
@@ -33,13 +33,14 @@ model Token {
 model TradingPair {
   id String @id @default(cuid())
 
-  baseToken   Token  @relation("BaseToken", fields: [baseTokenId], references: [id])
-  baseTokenId String
+  baseToken        Token  @relation("BaseToken", fields: [baseTokenAddress], references: [address])
+  baseTokenAddress String
 
-  quoteToken   Token  @relation("QuoteToken", fields: [quoteTokenId], references: [id])
-  quoteTokenId String
+  quoteToken        Token  @relation("QuoteToken", fields: [quoteTokenAddress], references: [address])
+  quoteTokenAddress String
 
   poolAddress String    @unique
+  poolFee     Int
   exchange    Exchange
   queryType   QueryType
 
