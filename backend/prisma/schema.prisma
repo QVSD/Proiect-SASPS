@@ -1,0 +1,48 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Exchange {
+  PANCAKE_V3
+  UNISWAP_V3
+}
+
+enum QueryType {
+  POLLING
+  SUBSCRIPTION
+}
+
+model Token {
+  id      String @id @default(cuid())
+  symbol  String
+  name    String
+  address String @unique
+
+  tradingPairsBase  TradingPair[] @relation("BaseToken")
+  tradingPairsQuote TradingPair[] @relation("QuoteToken")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model TradingPair {
+  id String @id @default(cuid())
+
+  baseToken   Token  @relation("BaseToken", fields: [baseTokenId], references: [id])
+  baseTokenId String
+
+  quoteToken   Token  @relation("QuoteToken", fields: [quoteTokenId], references: [id])
+  quoteTokenId String
+
+  poolAddress String    @unique
+  exchange    Exchange
+  queryType   QueryType
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
