@@ -21,6 +21,10 @@ export class SimulatorService {
     this.SIMULATOR_WALLET_ADDRESS = getAddress(walletAddress);
   }
 
+  async onModuleInit() {
+    this.startSimulation();
+  }
+
   async startSimulation() {
     this.logger.log('Starting simulation...');
 

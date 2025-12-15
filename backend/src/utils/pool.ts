@@ -40,7 +40,6 @@ export class UniswapV3Adapter {
       address: pool,
       abi: UNISWAP_V3_POOL_ABI,
       functionName: 'fee',
-      authorizationList: [],
     });
 
     return fee;
@@ -228,25 +227,21 @@ export class UniswapV3Adapter {
       address: pool,
       abi: UNISWAP_V3_POOL_ABI,
       functionName: 'slot0',
-      authorizationList: [],
     });
     const liquidityPromise = rpcClient.readContract({
       address: pool,
       abi: UNISWAP_V3_POOL_ABI,
       functionName: 'liquidity',
-      authorizationList: [],
     });
     const token0Promise = rpcClient.readContract({
       address: pool,
       abi: UNISWAP_V3_POOL_ABI,
       functionName: 'token0',
-      authorizationList: [],
     });
     const token1Promise = rpcClient.readContract({
       address: pool,
       abi: UNISWAP_V3_POOL_ABI,
       functionName: 'token1',
-      authorizationList: [],
     });
     const blockPromise = rpcClient.getBlock({ blockTag: 'latest' });
 
@@ -306,7 +301,6 @@ export class UniswapV3Adapter {
       address: poolId,
       abi: UNISWAP_V3_POOL_ABI,
       functionName: 'tickSpacing',
-      authorizationList: [],
     });
     return tickSpacing;
   }

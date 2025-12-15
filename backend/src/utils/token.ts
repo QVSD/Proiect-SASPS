@@ -56,7 +56,6 @@ export class ERC20Adapter {
       address: this.tokenAddress,
       functionName: 'balanceOf',
       args: [address],
-      authorizationList: [],
     });
   }
 
@@ -70,7 +69,6 @@ export class ERC20Adapter {
       address: this.tokenAddress,
       functionName: 'allowance',
       args: [owner, spender],
-      authorizationList: [],
     });
 
     return allowance;
