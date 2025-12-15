@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { TraderPollingService } from './price-query.service';
+import { TraderPollingService } from './trader-polling.service';
 
 @Module({
   providers: [TraderPollingService],

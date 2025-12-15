@@ -24,7 +24,6 @@ CREATE TABLE "TradingPair" (
     "poolAddress" TEXT NOT NULL,
     "poolFee" INTEGER NOT NULL,
     "exchange" "Exchange" NOT NULL,
-    "queryType" "QueryType" NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 

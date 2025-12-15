@@ -49,7 +49,6 @@ export class RepositoryService {
     const tradingPair = await prisma.tradingPair.create({
       data: {
         exchange: data.exchange,
-        queryType: data.queryType,
         poolAddress: data.poolAddress,
         poolFee: poolFee,
         createdAt,
@@ -62,5 +61,12 @@ export class RepositoryService {
     return tradingPair;
   }
 
-  async getTradingPair(symbol: string) {}
+  async getAllTradingPairs() {
+    return prisma.tradingPair.findMany({
+      include: {
+        baseToken: true,
+        quoteToken: true,
+      },
+    });
+  }
 }

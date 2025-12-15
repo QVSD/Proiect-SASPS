@@ -4,7 +4,7 @@
     "moduleResolution": "node",
     "strict": true,
     "esModuleInterop": true,
-    "ignoreDeprecations": "6.0",
+    "ignoreDeprecations": true,
     "declaration": true,
     "removeComments": true,
     "emitDecoratorMetadata": true,

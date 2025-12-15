@@ -5,10 +5,11 @@ import { APP_PIPE, APP_INTERCEPTOR } from '@nestjs/core';
 import { AppController } from './app.controller';
 import { TraderPollingModule } from './traders/polling/trader-polling.module';
 import { RepositoryModule } from './repository/repository.module';
-import { TraderObserverModule } from './traders/observer/price-observer.module';
+import { SimulatorModule } from './simulator/simulator.module';
+import { TraderObserverModule } from './traders/observer/trader-observer.module';
 
 @Module({
-  imports: [TraderPollingModule, RepositoryModule, TraderObserverModule],
+  imports: [RepositoryModule, SimulatorModule],
   controllers: [AppController],
   providers: [
     {

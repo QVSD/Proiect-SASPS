@@ -10,7 +10,6 @@ export class TokenImportDto extends createZodDto(TokenImportSchema) {}
 
 const TradingPairImportSchema = z.object({
   exchange: z.nativeEnum($Enums.Exchange),
-  queryType: z.nativeEnum($Enums.QueryType),
   poolAddress: z.string().length(42),
   quoteAddress: z.string().length(42),
 });
@@ -18,11 +17,3 @@ const TradingPairImportSchema = z.object({
 export class TradingPairImportDto extends createZodDto(
   TradingPairImportSchema,
 ) {}
-
-const TraderConfigSchema = z.object({
-  exchange: z.nativeEnum($Enums.Exchange),
-  queryType: z.nativeEnum($Enums.QueryType),
-  poolAddress: z.string().length(42),
-  baseAddress: z.string().length(42),
-  quoteAddress: z.string().length(42),
-});

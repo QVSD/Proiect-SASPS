@@ -1,6 +1,7 @@
 generator client {
   provider = "prisma-client"
   output   = "../generated/prisma"
+  engineType = "library"
 }
 
 datasource db {
@@ -39,10 +40,9 @@ model TradingPair {
   quoteToken        Token  @relation("QuoteToken", fields: [quoteTokenAddress], references: [address])
   quoteTokenAddress String
 
-  poolAddress String    @unique
+  poolAddress String   @unique
   poolFee     Int
   exchange    Exchange
-  queryType   QueryType
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

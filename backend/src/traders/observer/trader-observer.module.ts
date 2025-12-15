@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { TraderObserverService } from './price-observer.service';
+import { TraderObserverService } from './trader-observer.service';
 
 @Module({
   providers: [TraderObserverService],
