@@ -95,10 +95,11 @@ export class SimulatorService {
         });
 
         // Calculate minimum amount out with 0.5% slippage tolerance
-        const amountOutMin =
-          'amountOut' in quoteResult
-            ? (quoteResult.amountOut * BigInt(995)) / BigInt(1000)
+        const amountOutValue =
+          'amountOut' in quoteResult && quoteResult.amountOut !== undefined
+            ? quoteResult.amountOut
             : BigInt(0);
+        const amountOutMin = (amountOutValue * BigInt(995)) / BigInt(1000);
 
         this.logger.log(
           `Performing swap: ${randomPair.baseToken.symbol}/${randomPair.quoteToken.symbol} ` +
@@ -121,6 +122,12 @@ export class SimulatorService {
           `Generated ${swapTxs.length} transaction(s) for swap. ` +
             `Note: These are simulation transactions and need to be sent to the network.`,
         );
+
+        // Show transactions
+        console.log(swapTxs);
+
+        // sleep for 5 seconds
+        await this.sleep(5000);
       } catch (error) {
         this.logger.error(`Error during simulation: ${error}`);
       }

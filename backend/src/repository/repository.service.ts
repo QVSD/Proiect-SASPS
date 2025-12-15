@@ -1,5 +1,5 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { TokenImportDto, TradingPairImportDto } from 'src/dto';
+import { Injectable } from '@nestjs/common';
+import { TradingPairImportDto } from 'src/dto/index';
 import { prisma } from '../config/db';
 import { ERC20Adapter } from 'src/utils/token';
 import { getAddress } from 'viem';

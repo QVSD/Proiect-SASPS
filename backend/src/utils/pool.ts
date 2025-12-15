@@ -6,7 +6,6 @@ import {
   UNISWAP_V3_ROUTER_ABI,
   UNISWAP_V3_SWAP_ROUTER_ABI,
 } from '../abi/uniswap-v3';
-import { $Enums } from 'generated/prisma/client';
 import { rpcClient } from 'src/config/clients';
 import { ERC20Adapter } from './token';
 import {
@@ -19,6 +18,7 @@ import {
 } from './types';
 import { EXCHANGE_CONFIG, ExchangeConfig } from 'src/config/exchange';
 import { bigIntToDecimalString } from './numbers';
+import { $Enums } from '@prisma/client';
 
 export class UniswapV3Adapter {
   private readonly isPancakeV3: boolean;
@@ -284,7 +284,7 @@ export class UniswapV3Adapter {
     const Q96 = BigInt(2 ** 96);
     const Q192 = Q96 * Q96;
 
-    const sqrtPriceSquared = sqrtPriceX96 * sqrtPriceX96;
+    const sqrtPriceSquared = BigInt(sqrtPriceX96 * sqrtPriceX96);
     const decimalAdjustment = BigInt(
       10 ** Math.abs(token0Decimals - token1Decimals),
     );

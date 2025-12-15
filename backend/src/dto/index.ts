@@ -1,4 +1,4 @@
-import { $Enums } from 'generated/prisma/client';
+import { $Enums } from '@prisma/client';
 import { createZodDto } from 'nestjs-zod';
 import z from 'zod';
 

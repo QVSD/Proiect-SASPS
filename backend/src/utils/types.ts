@@ -1,4 +1,4 @@
-import { Address, Hex, Log } from 'viem';
+import { Address, Hex } from 'viem';
 
 // Unified swap data type for all DEX protocols (V2, V3, V4)
 export type DexSwapData =

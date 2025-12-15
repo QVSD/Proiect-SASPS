@@ -1,12 +1,8 @@
-import { rpcClient } from 'src/config/clients';
-
-import { Address, erc20Abi, encodeFunctionData, PublicClient } from 'viem';
+import { rpcClient } from '../config/clients';
+import { Address, erc20Abi, encodeFunctionData } from 'viem';
 
 export class ERC20Adapter {
   private readonly DEFAULT_APPROVE_GAS_LIMIT = '75000';
-  private readonly GET_ALLOWANCE_CACHE_TTL_MS = 60 * 60 * 1000; // 1 hour
-  private readonly cache: Map<string, { value: bigint; timestamp: number }> =
-    new Map();
 
   constructor(protected readonly tokenAddress: Address) {}
 
@@ -15,19 +11,16 @@ export class ERC20Adapter {
       abi: erc20Abi,
       address: this.tokenAddress,
       functionName: 'name',
-      authorizationList: [],
     });
     const symbolPromise = rpcClient.readContract({
       abi: erc20Abi,
       address: this.tokenAddress,
       functionName: 'symbol',
-      authorizationList: [],
     });
     const decimalsPromise = rpcClient.readContract({
       abi: erc20Abi,
       address: this.tokenAddress,
       functionName: 'decimals',
-      authorizationList: [],
     });
 
     const [name, symbol, decimals] = await Promise.all([

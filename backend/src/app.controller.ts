@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Post } from '@nestjs/common';
-import { TokenImportDto, TradingPairImportDto } from './dto';
+import { TokenImportDto, TradingPairImportDto } from './dto/index';
 import { RepositoryService } from './repository/repository.service';
 
 @Controller()

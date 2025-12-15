@@ -9,7 +9,12 @@ import { SimulatorModule } from './simulator/simulator.module';
 import { TraderObserverModule } from './traders/observer/trader-observer.module';
 
 @Module({
-  imports: [RepositoryModule, SimulatorModule],
+  imports: [
+    RepositoryModule,
+    SimulatorModule,
+    TraderPollingModule,
+    TraderObserverModule,
+  ],
   controllers: [AppController],
   providers: [
     {
