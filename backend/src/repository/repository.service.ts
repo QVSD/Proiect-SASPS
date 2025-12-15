@@ -21,7 +21,7 @@ export class RepositoryService {
     });
   }
 
-  async getTokenByAddress(address: string) {
+  async getToken(address: string) {
     const normalizedAddress = getAddress(address);
     const token = await prisma.token.findUnique({
       where: { address: normalizedAddress },
@@ -38,8 +38,8 @@ export class RepositoryService {
     const poolFee = await exchangeAdapter.getPoolFee(normalizedPoolAddress);
     const poolState = await exchangeAdapter.getPoolState(normalizedPoolAddress);
 
-    const quoteToken = await this.getTokenByAddress(data.quoteAddress);
-    const baseToken = await this.getTokenByAddress(
+    const quoteToken = await this.getToken(data.quoteAddress);
+    const baseToken = await this.getToken(
       getAddress(poolState.token0) === quoteToken.address
         ? getAddress(poolState.token1)
         : getAddress(poolState.token0),
@@ -61,4 +61,6 @@ export class RepositoryService {
 
     return tradingPair;
   }
+
+  async getTradingPair(symbol: string) {}
 }

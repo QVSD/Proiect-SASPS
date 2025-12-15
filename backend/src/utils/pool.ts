@@ -17,13 +17,13 @@ import {
   DexPoolState,
   UniswapV3StateData,
 } from './types';
-import { EXCHANGE_CONFIG, UniswapV3ExchangeConfig } from 'src/config/exchange';
+import { EXCHANGE_CONFIG, ExchangeConfig } from 'src/config/exchange';
 import { bigIntToDecimalString } from './numbers';
 
 export class UniswapV3Adapter {
   private readonly isPancakeV3: boolean;
   private readonly DEFAULT_SWAP_GAS_LIMIT = '300000';
-  private readonly exchangeConfig: UniswapV3ExchangeConfig;
+  private readonly exchangeConfig: ExchangeConfig;
 
   constructor(private readonly exchangeId: $Enums.Exchange) {
     this.isPancakeV3 = exchangeId === $Enums.Exchange.PANCAKE_V3;
