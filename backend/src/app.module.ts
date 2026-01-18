@@ -3,19 +3,13 @@ import { ZodValidationPipe, ZodSerializerInterceptor } from 'nestjs-zod';
 import { APP_PIPE, APP_INTERCEPTOR } from '@nestjs/core';
 
 import { AppController } from './app.controller';
-import { TraderPollingModule } from './traders/polling/trader-polling.module';
 import { RepositoryModule } from './repository/repository.module';
 import { SimulatorModule } from './simulator/simulator.module';
-import { TraderObserverModule } from './traders/observer/trader-observer.module';
+import { TraderController } from './traders/trader.controller';
 
 @Module({
-  imports: [
-    RepositoryModule,
-    SimulatorModule,
-    TraderPollingModule,
-    TraderObserverModule,
-  ],
-  controllers: [AppController],
+  imports: [RepositoryModule, SimulatorModule],
+  controllers: [AppController, TraderController],
   providers: [
     {
       provide: APP_PIPE,

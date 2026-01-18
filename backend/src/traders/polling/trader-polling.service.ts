@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
 import { $Enums } from '@prisma/client';
 import { prisma } from 'src/config/db';
 import { UniswapV3Adapter } from 'src/utils/pool';
@@ -8,11 +8,11 @@ type TradingPairConfig = Awaited<
   ReturnType<typeof prisma.tradingPair.findFirst>
 >;
 
-@Injectable()
 export class TraderPollingService {
   private tradingPairUniswap: TradingPairConfig = null;
   private tradingPairPancake: TradingPairConfig = null;
   private readonly logger = new Logger(TraderPollingService.name);
+  private interval: NodeJS.Timeout | null = null;
 
   constructor(
     private readonly baseToken: Address,
@@ -43,6 +43,24 @@ export class TraderPollingService {
       throw new Error(
         `Trading pair not found for Pancake V3: ${this.baseToken} / ${this.quoteToken}`,
       );
+  }
+
+  start(pollingIntervalMs = 1000) {
+    if (this.interval) {
+      return;
+    }
+
+    this.poll();
+    this.interval = setInterval(() => {
+      this.poll();
+    }, pollingIntervalMs);
+  }
+
+  stop() {
+    if (this.interval) {
+      clearInterval(this.interval);
+      this.interval = null;
+    }
   }
 
   async poll() {

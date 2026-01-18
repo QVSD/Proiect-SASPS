@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { TradingPairImportDto } from 'src/dto/index';
+import { TradingPairImportDto } from 'src/dto';
 import { prisma } from '../config/db';
 import { ERC20Adapter } from 'src/utils/token';
 import { getAddress } from 'viem';
