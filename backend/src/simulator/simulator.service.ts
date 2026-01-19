@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { RepositoryService } from '../repository/repository.service';
 import { UniswapV3Adapter } from '../utils/pool';
 import { getAddress, Address, createWalletClient } from 'viem';
-import { feedAllWallets, testWallets } from '../config/wallets';
+import { feedAllWallets, simulatorWallets } from '../config/wallets';
 import { USDC, USDT, WBNB } from '../config/tokens';
 import { ERC20Adapter } from 'src/utils/token';
 import {
@@ -86,7 +86,7 @@ export class SimulatorService {
         }
 
         const wallet =
-          testWallets[Math.floor(Math.random() * testWallets.length)];
+          simulatorWallets[Math.floor(Math.random() * simulatorWallets.length)];
         const tokenInAdapter = new ERC20Adapter(tokenIn);
         const tokenInBalance = await tokenInAdapter.getBalance(
           wallet.account.address,
@@ -126,8 +126,13 @@ export class SimulatorService {
           poolId: getAddress(randomPair.poolAddress),
         });
 
+        let currentNonce = await rpcClient.getTransactionCount({
+          address: wallet.account.address,
+        });
         for (const tx of swapTxs) {
+          tx.nonce = currentNonce;
           await wallet.sendTransaction(tx);
+          currentNonce++;
         }
 
         await this.sleep(500);

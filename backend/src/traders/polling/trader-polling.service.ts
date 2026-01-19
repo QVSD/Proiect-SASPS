@@ -3,6 +3,7 @@ import { $Enums } from '@prisma/client';
 import { prisma } from 'src/config/db';
 import { TraderPolling } from './trader-polling';
 import { Address, getAddress } from 'viem';
+import { traderWallets, traderWalletsPrivateKeys } from 'src/config/wallets';
 
 type PairKey = string;
 
@@ -40,7 +41,11 @@ export class TraderPollingService {
       ) {
         if (!this.pollingServices.has(key)) {
           const [baseToken, quoteToken] = key.split(':') as [Address, Address];
-          const service = new TraderPolling(baseToken, quoteToken);
+          const service = new TraderPolling(
+            traderWalletsPrivateKeys[started],
+            baseToken,
+            quoteToken,
+          );
           service.start();
           this.pollingServices.set(key, service);
           started += 1;

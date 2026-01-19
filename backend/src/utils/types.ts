@@ -74,6 +74,7 @@ export type TxRequest = {
   from: Address;
   to: Address;
   data: Hex;
+  nonce?: number;
 };
 
 export type ERC20Metadata = {
