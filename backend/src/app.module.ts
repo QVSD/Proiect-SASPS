@@ -5,11 +5,11 @@ import { APP_PIPE, APP_INTERCEPTOR } from '@nestjs/core';
 import { AppController } from './app.controller';
 import { RepositoryModule } from './repository/repository.module';
 import { SimulatorModule } from './simulator/simulator.module';
-import { TraderController } from './traders/trader.controller';
+import { TraderPollingModule } from './traders/polling/trader-polling.module';
 
 @Module({
-  imports: [RepositoryModule, SimulatorModule],
-  controllers: [AppController, TraderController],
+  imports: [RepositoryModule, SimulatorModule, TraderPollingModule],
+  controllers: [AppController],
   providers: [
     {
       provide: APP_PIPE,

@@ -2,26 +2,21 @@ import { Injectable, Logger } from '@nestjs/common';
 import { RepositoryService } from '../repository/repository.service';
 import { UniswapV3Adapter } from '../utils/pool';
 import { getAddress, Address, createWalletClient } from 'viem';
-import { feedAllWallets } from '../config/wallets';
+import { feedAllWallets, testWallets } from '../config/wallets';
 import { USDC, USDT, WBNB } from '../config/tokens';
+import { ERC20Adapter } from 'src/utils/token';
+import {
+  bigIntToDecimalString,
+  getRandomBigIntBetween,
+} from 'src/utils/numbers';
+import { rpcClient } from 'src/config/clients';
 
 @Injectable()
 export class SimulatorService {
   private readonly logger = new Logger(SimulatorService.name);
-  private readonly SIMULATOR_WALLET_ADDRESS: Address;
   private readonly SWAP_INTERVAL_SECONDS = 5;
-  private readonly MIN_SWAP_AMOUNT = 0.001; // Minimum swap amount in token units
-  private readonly MAX_SWAP_AMOUNT = 1.0; // Maximum swap amount in token units
 
-  constructor(private readonly repositoryService: RepositoryService) {
-    const walletAddress = process.env.SIMULATOR_WALLET_ADDRESS;
-    if (!walletAddress) {
-      throw new Error(
-        'SIMULATOR_WALLET_ADDRESS environment variable is required',
-      );
-    }
-    this.SIMULATOR_WALLET_ADDRESS = getAddress(walletAddress);
-  }
+  constructor(private readonly repositoryService: RepositoryService) {}
 
   async onModuleInit() {
     await feedAllWallets(USDT, BigInt(100_000 * 10 ** 18));
@@ -34,7 +29,9 @@ export class SimulatorService {
   async startSimulation() {
     this.logger.log('Starting simulation...');
 
-    while (true) {
+    const finalEndBlock = 73700000;
+    let blockNumber = await rpcClient.getBlockNumber();
+    while (blockNumber < finalEndBlock) {
       try {
         // get list of pools to perform swaps
         const tradingPairs = await this.repositoryService.getAllTradingPairs();
@@ -88,13 +85,17 @@ export class SimulatorService {
           tokenInDecimals = randomPair.baseToken.decimals;
         }
 
-        // get a random amount to perform swap
-        const randomAmount =
-          Math.random() * (this.MAX_SWAP_AMOUNT - this.MIN_SWAP_AMOUNT) +
-          this.MIN_SWAP_AMOUNT;
-        const amountIn = BigInt(
-          Math.floor(randomAmount * 10 ** tokenInDecimals),
+        const wallet =
+          testWallets[Math.floor(Math.random() * testWallets.length)];
+        const tokenInAdapter = new ERC20Adapter(tokenIn);
+        const tokenInBalance = await tokenInAdapter.getBalance(
+          wallet.account.address,
         );
+        const maxSwapAmount = tokenInBalance / 2n;
+        const minSwapAmount = tokenInBalance / 1000n;
+
+        // get a random amount to perform swap
+        const amountIn = getRandomBigIntBetween(minSwapAmount, maxSwapAmount);
 
         // Get quote to determine minimum amount out
         const quoteResult = await exchangeAdapter.quote({
@@ -112,29 +113,25 @@ export class SimulatorService {
         const amountOutMin = (amountOutValue * BigInt(995)) / BigInt(1000);
 
         this.logger.log(
-          `Performing swap: ${randomPair.baseToken.symbol}/${randomPair.quoteToken.symbol} ` +
-            `(${randomPair.exchange}) - Direction: ${swapDirection}, Amount: ${randomAmount}`,
+          `Performing swap: ${randomPair.baseToken.symbol}/${randomPair.quoteToken.symbol} with wallet ${wallet.account.address} ` +
+            `(${randomPair.exchange}) - Direction: ${swapDirection}, Amount: ${bigIntToDecimalString(amountIn, BigInt(10 ** tokenInDecimals))}`,
         );
 
         // perform swap
-        const swapTxs = await exchangeAdapter.swap(
-          this.SIMULATOR_WALLET_ADDRESS,
-          {
-            tokenIn,
-            tokenOut,
-            amountIn,
-            amountOutMin,
-            poolId: getAddress(randomPair.poolAddress),
-          },
-        );
+        const swapTxs = await exchangeAdapter.swap(wallet.account.address, {
+          tokenIn,
+          tokenOut,
+          amountIn,
+          amountOutMin,
+          poolId: getAddress(randomPair.poolAddress),
+        });
 
-        this.logger.log(
-          `Generated ${swapTxs.length} transaction(s) for swap. ` +
-            `Note: These are simulation transactions and need to be sent to the network.`,
-        );
+        for (const tx of swapTxs) {
+          await wallet.sendTransaction(tx);
+        }
 
-        // sleep for 5 seconds
-        await this.sleep(5000);
+        await this.sleep(500);
+        blockNumber = await rpcClient.getBlockNumber();
       } catch (error) {
         this.logger.error(`Error during simulation: ${error}`);
       }

@@ -74,11 +74,6 @@ export type TxRequest = {
   from: Address;
   to: Address;
   data: Hex;
-  value?: string; // Number string
-  gas?: string; // Number string'
-  maxFeePerGas?: string; // Number string
-  maxPriorityFeePerGas?: string; // Number string
-  nonce?: number;
 };
 
 export type ERC20Metadata = {

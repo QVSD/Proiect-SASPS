@@ -22,7 +22,6 @@ import { bigIntToDecimalString } from './numbers';
 
 export class UniswapV3Adapter {
   private readonly isPancakeV3: boolean;
-  private readonly DEFAULT_SWAP_GAS_LIMIT = '300000';
   private readonly exchangeConfig: ExchangeConfig;
 
   constructor(private readonly exchangeId: $Enums.Exchange) {
@@ -162,7 +161,6 @@ export class UniswapV3Adapter {
       chainId: rpcClient.chain.id,
       from: initiator,
       to: this.exchangeConfig.routerAddress,
-      gas: this.DEFAULT_SWAP_GAS_LIMIT,
       data: swapData_encoded,
     };
     txs.push(swapTx);

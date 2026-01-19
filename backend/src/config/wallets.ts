@@ -34,9 +34,9 @@ export const wbnbWhale =
   '0x308000D0169Ebe674B7640f0c415f44c6987d04D' as Address;
 
 export const WHALES = {
-  USDT: usdtWhale,
-  USDC: usdcWhale,
-  WBNB: wbnbWhale,
+  [USDT]: usdtWhale,
+  [USDC]: usdcWhale,
+  [WBNB]: wbnbWhale,
 } as const;
 
 export async function feedAllWallets(tokenAddress: Address, amount: bigint) {

@@ -2,8 +2,6 @@ import { rpcClient } from '../config/clients';
 import { Address, erc20Abi, encodeFunctionData } from 'viem';
 
 export class ERC20Adapter {
-  private readonly DEFAULT_APPROVE_GAS_LIMIT = '75000';
-
   constructor(protected readonly tokenAddress: Address) {}
 
   public async getMetadata() {
@@ -59,7 +57,6 @@ export class ERC20Adapter {
         functionName: 'approve',
         args: [spender, amount],
       }),
-      gas: this.DEFAULT_APPROVE_GAS_LIMIT,
     };
   }
 
