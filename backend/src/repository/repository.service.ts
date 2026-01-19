@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { TradingPairImportDto } from 'src/dto';
-import { prisma } from '../config/db';
-import { ERC20Adapter } from 'src/utils/token';
 import { getAddress } from 'viem';
-import { UniswapV3Adapter } from 'src/utils/pool';
+import { prisma } from '../config/db';
+import { TradingPairImportDto } from '../dto';
+import { ERC20Adapter } from '../utils/token';
+import { UniswapV3Adapter } from '../utils/pool';
 
 @Injectable()
 export class RepositoryService {

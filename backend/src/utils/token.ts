@@ -36,6 +36,19 @@ export class ERC20Adapter {
     };
   }
 
+  public transferFrom(from: Address, to: Address, amount: bigint) {
+    return {
+      chainId: rpcClient.chain.id,
+      from: from,
+      to: this.tokenAddress,
+      data: encodeFunctionData({
+        abi: erc20Abi,
+        functionName: 'transfer',
+        args: [to, amount],
+      }),
+    };
+  }
+
   public approve(owner: Address, spender: Address, amount: bigint) {
     return {
       chainId: rpcClient.chain.id,

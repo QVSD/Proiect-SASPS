@@ -1,7 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { RepositoryService } from '../repository/repository.service';
 import { UniswapV3Adapter } from '../utils/pool';
-import { getAddress, Address } from 'viem';
+import { getAddress, Address, createWalletClient } from 'viem';
+import { feedAllWallets } from '../config/wallets';
+import { USDC, USDT, WBNB } from '../config/tokens';
 
 @Injectable()
 export class SimulatorService {
@@ -22,6 +24,10 @@ export class SimulatorService {
   }
 
   async onModuleInit() {
+    await feedAllWallets(USDT, BigInt(100_000 * 10 ** 18));
+    await feedAllWallets(USDC, BigInt(100_000 * 10 ** 18));
+    await feedAllWallets(WBNB, BigInt(120 * 10 ** 18));
+
     this.startSimulation();
   }
 
@@ -126,9 +132,6 @@ export class SimulatorService {
           `Generated ${swapTxs.length} transaction(s) for swap. ` +
             `Note: These are simulation transactions and need to be sent to the network.`,
         );
-
-        // Show transactions
-        console.log(swapTxs);
 
         // sleep for 5 seconds
         await this.sleep(5000);

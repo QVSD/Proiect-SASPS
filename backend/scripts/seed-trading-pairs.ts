@@ -1,8 +1,10 @@
 import 'dotenv/config';
 import { $Enums } from '@prisma/client';
-import { RepositoryService } from 'src/repository/repository.service';
-import { prisma } from 'src/config/db';
 import { Address, getAddress } from 'viem';
+
+import { RepositoryService } from '../src/repository/repository.service';
+import { prisma } from '../src/config/db';
+import { USDC, USDT, WBNB } from '../src/config/tokens';
 
 type PairSeed = {
   name: string;
@@ -12,9 +14,9 @@ type PairSeed = {
 };
 
 const TOKENS = {
-  WBNB: '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c' as Address,
-  USDT: '0x55d398326f99059fF775485246999027B3197955' as Address,
-  USDC: '0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d' as Address,
+  WBNB,
+  USDT,
+  USDC,
 };
 
 // Provide pool addresses via env or edit the defaults below.
@@ -27,7 +29,8 @@ const PAIRS: PairSeed[] = [
         '0x172fcD41E0913e95784454622d1c3724f546f849') as Address,
     ),
     uniswapPool: getAddress(
-      (process.env.UNISWAP_WBNB_USDT_POOL ?? '0x0000000000000000000000000000000000000000') as Address,
+      (process.env.UNISWAP_WBNB_USDT_POOL ??
+        '0x0000000000000000000000000000000000000000') as Address,
     ),
   },
   {
@@ -38,17 +41,20 @@ const PAIRS: PairSeed[] = [
         '0xf2688Fb5B81049DFB7703aDa5e770543770612C4') as Address,
     ),
     uniswapPool: getAddress(
-      (process.env.UNISWAP_WBNB_USDC_POOL ?? '0x0000000000000000000000000000000000000000') as Address,
+      (process.env.UNISWAP_WBNB_USDC_POOL ??
+        '0x0000000000000000000000000000000000000000') as Address,
     ),
   },
   {
     name: 'USDT/USDC',
     quoteToken: TOKENS.USDC,
     pancakePool: getAddress(
-      (process.env.PANCAKE_USDT_USDC_POOL ?? '0x0000000000000000000000000000000000000000') as Address,
+      (process.env.PANCAKE_USDT_USDC_POOL ??
+        '0x0000000000000000000000000000000000000000') as Address,
     ),
     uniswapPool: getAddress(
-      (process.env.UNISWAP_USDT_USDC_POOL ?? '0x0000000000000000000000000000000000000000') as Address,
+      (process.env.UNISWAP_USDT_USDC_POOL ??
+        '0x0000000000000000000000000000000000000000') as Address,
     ),
   },
 ];
@@ -111,4 +117,3 @@ seed()
   .finally(async () => {
     await prisma.$disconnect();
   });
-

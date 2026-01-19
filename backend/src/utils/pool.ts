@@ -1,4 +1,5 @@
 import { Address, encodeFunctionData, maxUint256 } from 'viem';
+import { $Enums } from '@prisma/client';
 
 import {
   UNISWAP_V3_POOL_ABI,
@@ -6,7 +7,7 @@ import {
   UNISWAP_V3_ROUTER_ABI,
   UNISWAP_V3_SWAP_ROUTER_ABI,
 } from '../abi/uniswap-v3';
-import { rpcClient } from 'src/config/clients';
+import { rpcClient } from '../config/clients';
 import { ERC20Adapter } from './token';
 import {
   DexSwapData,
@@ -16,9 +17,8 @@ import {
   DexPoolState,
   UniswapV3StateData,
 } from './types';
-import { EXCHANGE_CONFIG, ExchangeConfig } from 'src/config/exchange';
+import { EXCHANGE_CONFIG, ExchangeConfig } from '../config/exchange';
 import { bigIntToDecimalString } from './numbers';
-import { $Enums } from '@prisma/client';
 
 export class UniswapV3Adapter {
   private readonly isPancakeV3: boolean;
