@@ -6,6 +6,7 @@ import { AppController } from './app.controller';
 import { RepositoryModule } from './repository/repository.module';
 import { SimulatorModule } from './simulator/simulator.module';
 import { TraderPollingModule } from './traders/polling/trader-polling.module';
+import { TraderObserverModule } from './traders/observer/trader-observer.module';
 
 @Module({
   imports: [RepositoryModule, SimulatorModule, TraderPollingModule],

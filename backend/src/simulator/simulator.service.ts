@@ -29,9 +29,8 @@ export class SimulatorService {
   async startSimulation() {
     this.logger.log('Starting simulation...');
 
-    const finalEndBlock = 73700000;
-    let blockNumber = await rpcClient.getBlockNumber();
-    while (blockNumber < finalEndBlock) {
+    const trials = 1000;
+    for (let i = 0; i < trials; i++) {
       try {
         // get list of pools to perform swaps
         const tradingPairs = await this.repositoryService.getAllTradingPairs();
@@ -134,13 +133,13 @@ export class SimulatorService {
           await wallet.sendTransaction(tx);
           currentNonce++;
         }
-
-        await this.sleep(500);
-        blockNumber = await rpcClient.getBlockNumber();
       } catch (error) {
         this.logger.error(`Error during simulation: ${error}`);
       }
     }
+
+    // exit the process
+    process.exit(0);
   }
 
   private sleep(ms: number): Promise<void> {

@@ -5,6 +5,7 @@ import { wsClient, chain, rpcClient } from 'src/config/clients';
 import { UniswapV3Adapter } from 'src/utils/pool';
 import { UNISWAP_V3_POOL_ABI } from 'src/abi/uniswap-v3';
 import { ERC20Adapter } from 'src/utils/token';
+import { bigIntToDecimalString } from 'src/utils/numbers';
 import { Address, createWalletClient, getAddress, Hex, http } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
 
@@ -34,6 +35,7 @@ export class TraderObserver {
     process.env.ARB_QUOTE_TRADE_FRACTION_BPS ?? 200,
   ); // 2%
   private readonly wallet;
+  private txCount = 0;
 
   constructor(
     private readonly walletPrivateKey: Hex,
@@ -124,22 +126,12 @@ export class TraderObserver {
       await this.onModuleInit();
     }
 
-    const pools = [
-      getAddress(this.tradingPairUniswap!.poolAddress as Address),
-      getAddress(this.tradingPairPancake!.poolAddress as Address),
-    ];
-
-    for (const pool of pools) {
-      const unwatch = wsClient.watchContractEvent({
-        address: pool,
-        abi: UNISWAP_V3_POOL_ABI,
-        eventName: 'Swap',
-        onLogs: async () => {
-          await this.handlePoolUpdate();
-        },
-      });
-      this.unwatchers.push(unwatch);
-    }
+    const unwatch = wsClient.watchBlockNumber({
+      onBlockNumber: async (blockNumber) => {
+        await this.handlePoolUpdate();
+      },
+    });
+    this.unwatchers.push(unwatch);
   }
 
   private async handlePoolUpdate() {
@@ -254,6 +246,7 @@ export class TraderObserver {
       try {
         await this.wallet.sendTransaction(tx);
         currentNonce++;
+        this.txCount += 1;
       } catch (error) {
         this.logger!.error(
           `Buy leg transaction reverted for ${this.baseTokenMeta!.symbol}/${this.quoteTokenMeta!.symbol}`,
@@ -299,6 +292,7 @@ export class TraderObserver {
         tx.nonce = currentNonce;
         await this.wallet.sendTransaction(tx);
         currentNonce++;
+        this.txCount += 1;
       } catch (error) {
         this.logger!.error(
           `Sell leg transaction reverted for ${this.baseTokenMeta!.symbol}/${this.quoteTokenMeta!.symbol}`,
@@ -308,10 +302,54 @@ export class TraderObserver {
       }
     }
 
+    await this.recordMetrics();
+
     this.logger!.log(
       `Arbitrage swap executed: ${opportunity} | ` +
         `Quote in: ${amountIn.toString()} | Base sold: ${baseToSell.toString()}`,
     );
+  }
+
+  private async recordMetrics() {
+    if (!this.baseTokenMeta || !this.quoteTokenMeta) {
+      return;
+    }
+
+    const [blockNumber, baseBalance, quoteBalance] = await Promise.all([
+      rpcClient.getBlockNumber(),
+      new ERC20Adapter(this.baseTokenMeta.address).getBalance(
+        this.wallet.account.address,
+      ),
+      new ERC20Adapter(this.quoteTokenMeta.address).getBalance(
+        this.wallet.account.address,
+      ),
+    ]);
+
+    const baseBalanceNormalized = Number(
+      bigIntToDecimalString(
+        baseBalance,
+        BigInt(10 ** this.baseTokenMeta.decimals),
+      ),
+    );
+    const quoteBalanceNormalized = Number(
+      bigIntToDecimalString(
+        quoteBalance,
+        BigInt(10 ** this.quoteTokenMeta.decimals),
+      ),
+    );
+
+    await prisma.traderMetric.create({
+      data: {
+        traderAddress: this.wallet.account.address,
+        baseTokenAddress: this.baseTokenMeta.address,
+        quoteTokenAddress: this.quoteTokenMeta.address,
+        traderType: $Enums.QueryType.SUBSCRIPTION,
+        blockNumber: Number(blockNumber),
+        txCount: this.txCount,
+        baseBalance: baseBalanceNormalized,
+        quoteBalance: quoteBalanceNormalized,
+      },
+    });
   }
 
   private async fetchPrice(tradingPair: TradingPairConfig) {
